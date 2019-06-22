@@ -39,6 +39,7 @@
 /NEWS.TXT
 /ssdeep
 /ssdeep-[0-9]*
+/build*/
 
 # /m4/
 /m4/*.m4
