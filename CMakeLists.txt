@@ -3,10 +3,9 @@ cmake_policy(VERSION 3.7)
 
 option(SSDEEP_DISABLE_POSITION_ARRAY
     "Disable bit-parallel string operations." OFF)
+option(SSDEEP_INSTALL_HEADERS "Install public header files" ON)
 
-option(INSTALL_HEADERS "Install public header files" ON)
-
-project(ssdeep C)
+project(ssdeep VERSION 2.14.1)
 
 include(CheckIncludeFile)
 include(CheckFunctionExists)
@@ -34,26 +33,16 @@ check_function_exists(ftello.h HAVE_FSEEKO)
 
 configure_file(config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
+
 add_library(fuzzy
-    cycles.cpp
-    dig.cpp
+    edit_dist.h
     edit_dist.c
-    edit_dist.c
-    engine.cpp
-    filedata.cpp
     find-file-size.c
+    fuzzy.h
     fuzzy.c
-    fuzzy.c
-    helpers.cpp
-    main.cpp
-    match.cpp
-    ui.cpp
 )
 
-target_compile_definitions(fuzzy
-    PRIVATE
-        -DHAVE_CONFIG_H
-)
+target_compile_definitions(fuzzy PRIVATE -DHAVE_CONFIG_H)
 
 target_include_directories(fuzzy
     PRIVATE
@@ -62,23 +51,12 @@ target_include_directories(fuzzy
 )
 
 if(MSVC)
-    target_compile_definitions(fuzzy
-        PRIVATE
-            -D_CRT_SECURE_NO_WARNINGS
-    )
-
-    target_compile_options(fuzzy
-        PRIVATE
-            $<$<CONFIG:RELEASE>:/guard:cf>
-    )
+    target_compile_definitions(fuzzy PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+    target_compile_options(fuzzy PRIVATE $<$<CONFIG:RELEASE>:/guard:cf>)
 endif()
 
-set(PUBLIC_HEADERS
-    ssdeep.h
-)
-
 if(INSTALL_HEADERS)
-    set_target_properties(fuzzy PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
+    set_target_properties(fuzzy PROPERTIES PUBLIC_HEADER "ssdeep.h")
 endif()
 
 install(
@@ -96,3 +74,42 @@ install(
     NAMESPACE ssdeep::
     CONFIGURATIONS Release
 )
+
+
+add_executable(ssdeep
+    cycles.cpp
+    dig.cpp
+    edit_dist.h
+    engine.cpp
+    filedata.h
+    filedata.cpp
+    find-file-size.c
+    fuzzy.h
+    helpers.cpp
+    main.h
+    main.cpp
+    match.h
+    match.cpp
+    ui.cpp
+    ssdeep.h
+    tchar-local.h
+)
+
+target_compile_definitions(ssdeep
+    PRIVATE
+        -DHAVE_CONFIG_H
+        -DVERSION="${PROJECT_VERSION}"
+)
+
+target_include_directories(ssdeep
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+target_link_libraries(ssdeep PRIVATE fuzzy)
+
+if(MSVC)
+    target_compile_definitions(ssdeep PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+    target_compile_options(ssdeep PRIVATE $<$<CONFIG:RELEASE>:/guard:cf>)
+endif()
