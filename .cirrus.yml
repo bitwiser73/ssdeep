@@ -15,6 +15,7 @@ msvc_task:
     - cd .. && mkdir build-shared && cd build-shared
     - "\"%ProgramFiles%\\cmake\\bin\\cmake\" -DBUILD_SHARED_LIBS=ON .."
     - "\"%ProgramFiles%\\cmake\\bin\\cmake\" --build ."
+    - ./sample
 
 linux_task:
   container:
@@ -27,6 +28,7 @@ linux_task:
     - cd .. && mkdir build-shared && cd build-shared
     - cmake -DBUILD_SHARED_LIBS=ON ..
     - cmake --build .
+    - ./sample
 
 bsd_task:
   freebsd_instance:
@@ -39,6 +41,7 @@ bsd_task:
     - cd .. && mkdir build-shared && cd build-shared
     - cmake -DBUILD_SHARED_LIBS=ON ..
     - cmake --build .
+    - ./sample
 
 osx_task:
   osx_instance:
@@ -51,3 +54,4 @@ osx_task:
     - cd .. && mkdir build-shared && cd build-shared
     - cmake -DBUILD_SHARED_LIBS=ON ..
     - cmake --build .
+    - ./sample

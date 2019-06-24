@@ -113,3 +113,10 @@ if(MSVC)
     target_compile_definitions(ssdeep PRIVATE -D_CRT_SECURE_NO_WARNINGS)
     target_compile_options(ssdeep PRIVATE $<$<CONFIG:RELEASE>:/guard:cf>)
 endif()
+
+
+add_executable(sample
+    sample.c
+)
+
+target_link_libraries(sample PRIVATE fuzzy)

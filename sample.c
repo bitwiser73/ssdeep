@@ -110,11 +110,13 @@ int main(int argc, char **argv)
   printf ("Hashing file\n");
   status = fuzzy_hash_file(handle,result);
   if (status)
+  {
     printf ("Error during file hash\n");
-  else
-    printf ("%s\n", result);
-  fclose(handle);
+    return EXIT_FAILURE;
+  }
 
+  printf ("%s\n", result);
+  fclose(handle);
 
   printf ("Modifying buffer and comparing to file\n");
   int i;
@@ -122,20 +124,25 @@ int main(int argc, char **argv)
     buf[i] = 37;
   status = fuzzy_hash_buf(buf,SIZE,result2);  
   if (status)
+  {
     printf ("Error during buffer hash\n");
-  else
-    printf ("%s\n", result2);
+    return EXIT_FAILURE;
+  }
+  printf ("%s\n", result2);
 
   i = fuzzy_compare(result,result2);
   if (-1 == i)
-    printf ("An error occured during matching\n");
-  else
   {
-    if (i != 0)
-      printf ("MATCH: score = %d\n", i);
-    else
-      printf ("did not match\n");
+    printf ("An error occured during matching\n");
+    return EXIT_FAILURE;
   }
+
+  if (i == 0)
+  {
+    printf ("did not match\n");
+    return EXIT_FAILURE;
+  }
+  printf ("MATCH: score = %d\n", i);
 
   return EXIT_SUCCESS;
 }
